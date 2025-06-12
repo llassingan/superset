@@ -1,0 +1,3 @@
+sqlalchemy-redshift
+psycopg2-binary
+pymssql
