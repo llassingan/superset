@@ -1,3 +1,6 @@
-sqlalchemy-redshift
-psycopg2-binary
-pymssql
+psycopg2-binary==2.9.10
+sqlalchemy-redshift==0.8.14
+PyMySQL==1.1.1
+pyodbc==5.2.0
+pyathena[pandas]==2.25.0
+trino==0.336.0
