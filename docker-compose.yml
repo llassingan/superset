@@ -1,35 +1,64 @@
 services:
-  superset:
-    image: apache/superset:latest
-    container_name: superset
-    ports:
-      - "8007:8088"  # Expose Superset on host port 8007
-    environment:
-      - SUPERSET_ENV=development
-      - SUPERSET_CONFIG_PATH=/app/pythonpath/superset_config.py
-    volumes:
-      - ./superset_config.py:/app/pythonpath/superset_config.py
-      - ./requirements.txt:/app/requirements.txt
-    command: >
-      /bin/bash -c "
-        pip install -r /app/requirements.txt &&
-        superset db upgrade &&
-        superset fab create-admin --username admin --firstname Superset --lastname Admin --email admin@superset.com --password rdajuara || true && 
-        superset load-examples && 
-        superset init &&
-        superset run -h 0.0.0.0 -p 8088
-      "
-    depends_on:
-      - db
 
   db:
-    image: postgres:13
+    image: postgres:16
+
+    container_name: superset-db
+
     environment:
       POSTGRES_DB: superset
       POSTGRES_USER: superset
       POSTGRES_PASSWORD: superset
+
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
+
+    restart: unless-stopped
+
+  superset:
+
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: superset
+
+    restart: unless-stopped
+
+    depends_on:
+      - db
+
+    ports:
+      - "8007:8088"
+
+    environment:
+
+      SUPERSET_ENV: production
+
+      SUPERSET_CONFIG_PATH: /app/pythonpath/superset_config.py
+
+      SUPERSET_SECRET_KEY: change-this-secret-key
+
+      DATABASE_DIALECT: postgresql
+      DATABASE_USER: superset
+      DATABASE_PASSWORD: superset
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_DB: superset
+
+    volumes:
+      - ./superset_config.py:/app/pythonpath/superset_config.py
+
+    command: >
+      /bin/sh -c "
+      superset db upgrade &&
+      superset fab create-admin --username admin --firstname Admin --lastname User --email admin@example.com --password password || true &&
+      superset init &&
+      gunicorn --bind 0.0.0.0:8088 --workers 4 --timeout 120 'superset.app:create_app()'
+      "
+
+    cpus: 4.0
+    mem_limit: 4g
 
 volumes:
-  pgdata:
+  postgres-data:
