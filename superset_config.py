@@ -1,4 +1,36 @@
-# superset_config.py
-ROW_LIMIT = 5000
-SUPERSET_WEBSERVER_PORT = 8088
-SECRET_KEY = 'rdajuara'
+import os
+
+from sqlalchemy.engine.url import URL
+
+SECRET_KEY = os.getenv(
+    "SUPERSET_SECRET_KEY",
+    "thirsisthesecret"
+)
+
+# SQLALCHEMY_DATABASE_URI = URL.create(
+#     drivername="postgresql+psycopg2",
+#     username=os.getenv("DATABASE_USER"),
+#     password=os.getenv("DATABASE_PASSWORD"),
+#     host=os.getenv("DATABASE_HOST"),
+#     port=os.getenv("DATABASE_PORT"),
+#     database=os.getenv("DATABASE_DB"),
+# )
+SQLALCHEMY_DATABASE_URI = (
+    f"postgresql+psycopg2://"
+    f"{os.environ['DATABASE_USER']}:"
+    f"{os.environ['DATABASE_PASSWORD']}@"
+    f"{os.environ['DATABASE_HOST']}:"
+    f"{os.environ['DATABASE_PORT']}/"
+    f"{os.environ['DATABASE_DB']}"
+)
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+ROW_LIMIT = 100000
+
+FEATURE_FLAGS = {
+    "ALERT_REPORTS": False,
+    "ENABLE_SUPERSET_META_DB": True,
+}
+
+SUPERSET_META_DB_LIMIT = 50000
+ENABLE_PROXY_FIX = True
