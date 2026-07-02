@@ -7,14 +7,6 @@ SECRET_KEY = os.getenv(
     "thirsisthesecret"
 )
 
-# SQLALCHEMY_DATABASE_URI = URL.create(
-#     drivername="postgresql+psycopg2",
-#     username=os.getenv("DATABASE_USER"),
-#     password=os.getenv("DATABASE_PASSWORD"),
-#     host=os.getenv("DATABASE_HOST"),
-#     port=os.getenv("DATABASE_PORT"),
-#     database=os.getenv("DATABASE_DB"),
-# )
 SQLALCHEMY_DATABASE_URI = (
     f"postgresql+psycopg2://"
     f"{os.environ['DATABASE_USER']}:"
