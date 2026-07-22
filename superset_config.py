@@ -4,7 +4,7 @@ from sqlalchemy.engine.url import URL
 
 SECRET_KEY = os.getenv(
     "SUPERSET_SECRET_KEY",
-    "rdajuara1"
+    "thisisasecret"
 )
 
 SQLALCHEMY_DATABASE_URI = (
