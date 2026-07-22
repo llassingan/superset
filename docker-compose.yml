@@ -7,8 +7,8 @@ services:
 
     environment:
       POSTGRES_DB: superset
-      POSTGRES_USER: superset
-      POSTGRES_PASSWORD: superset
+      POSTGRES_USER: superset_rda
+      POSTGRES_PASSWORD: sup3rset_7uara
 
     volumes:
       - postgres-data:/var/lib/postgresql/data
@@ -40,8 +40,8 @@ services:
       SUPERSET_SECRET_KEY: change-this-secret-key
 
       DATABASE_DIALECT: postgresql
-      DATABASE_USER: superset
-      DATABASE_PASSWORD: superset
+      DATABASE_USER: superset_rda
+      DATABASE_PASSWORD: sup3rset_7uara
       DATABASE_HOST: db
       DATABASE_PORT: 5432
       DATABASE_DB: superset
@@ -52,13 +52,23 @@ services:
     command: >
       /bin/sh -c "
       superset db upgrade &&
-      superset fab create-admin --username admin --firstname Admin --lastname User --email admin@example.com --password password || true &&
+      superset fab create-admin --username admin --firstname Admin --lastname User --email admin@example.com --password P05juara1 || true &&
       superset init &&
       gunicorn --bind 0.0.0.0:8088 --workers 4 --timeout 120 'superset.app:create_app()'
       "
 
     cpus: 4.0
     mem_limit: 4g
+  trino:
+    image: trinodb/trino:477
+    container_name: trino
+    env_file:
+      - .env
+    ports:
+      - "8008:8080"
+    volumes:
+      - ./trino/etc:/etc/trino
+    restart: unless-stopped
 
 volumes:
   postgres-data:
